@@ -1,7 +1,7 @@
 public with sharing class SwitchCaseHelper {
 
-	public static final Boolean HAS_BREAK = true;
-	public static final Boolean HAS_NOT_BREAK = false;
+	public static final Boolean PUT_BREAK = true;
+	public static final Boolean PUT_CONTINUE = false;
 
 	public class SwitchCaseException extends Exception {}
 
@@ -22,7 +22,7 @@ public with sharing class SwitchCaseHelper {
 		return this;
 	}
 
-	public SwitchCaseHelper case(Object caseOperand, SwitchContext container, Boolean hasBreak) {
+	public SwitchCaseHelper case(Object caseOperand, ActionContainer container, Boolean hasBreak) {
 		if (isPreviousSwitch == null) {
 			throw new SwitchCaseException('Switch-Case construction must have one (and only one) "switch" statement');
 		}
@@ -43,7 +43,7 @@ public with sharing class SwitchCaseHelper {
 		return this;
 	}
 
-	public SwitchCaseHelper default(SwitchContext container) {
+	public SwitchCaseHelper default(ActionContainer container) {
 
 		if (isPreviousSwitch == null) {
 			throw new SwitchCaseException('Switch-Case construction must have one (and only one) "switch" statement');
