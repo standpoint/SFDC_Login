@@ -1,58 +1,67 @@
 public with sharing class SwitchCaseHelper {
 
-	public static final Boolean PUT_BREAK = true;
-	public static final Boolean PUT_CONTINUE = false;
+    public static final Boolean PUT_BREAK = true;
+    public static final Boolean PUT_CONTINUE = false;
 
-	public class SwitchCaseException extends Exception {}
+    public class SwitchCaseException extends Exception {}
 
-	private Object switchOperand;
-	private Boolean isCaseAfterBreakStatement;
-	private Boolean isPreviousSwitch;
-	
-	public SwitchCaseHelper() {
-		isCaseAfterBreakStatement = false;
-	}
+    public static final String EXCEPTION_MESSAGE = 'Switch-Case construction must have one (and only one) "switch" statement';
 
-	public SwitchCaseHelper switch(Object switchOperand) {
-		if (isPreviousSwitch != null) {
-			throw new SwitchCaseException('Switch-Case construction must have one (and only one) "switch" statement');
-		}
-		isPreviousSwitch = true;
-		this.switchOperand = switchOperand;
-		return this;
-	}
+    @TestVisible
+    private Object switchOperand;
 
-	public SwitchCaseHelper case(Object caseOperand, ActionContainer container, Boolean hasBreak) {
-		if (isPreviousSwitch == null) {
-			throw new SwitchCaseException('Switch-Case construction must have one (and only one) "switch" statement');
-		}
+    @TestVisible
+    private Boolean isCaseAfterBreakStatement;
 
-		if (isPreviousSwitch) {
-			isPreviousSwitch = false;
-		}
+    @TestVisible
+    private Boolean isPreviousSwitch;
+    
+    public SwitchCaseHelper() {
 
-		if (isCaseAfterBreakStatement) {
-			return this;
-		}
+        isCaseAfterBreakStatement = false;
+    }
 
-		if (switchOperand.equals(caseOperand)) {
-			container.doAction();
-			isCaseAfterBreakStatement = hasBreak;
-		}
-		
-		return this;
-	}
+    public SwitchCaseHelper switch(Object switchOperand) {
 
-	public SwitchCaseHelper default(ActionContainer container) {
+        if (isPreviousSwitch != null) {
+            throw new SwitchCaseException(EXCEPTION_MESSAGE);
+        }
+        isPreviousSwitch = true;
+        this.switchOperand = switchOperand;
+        return this;
+    }
 
-		if (isPreviousSwitch == null) {
-			throw new SwitchCaseException('Switch-Case construction must have one (and only one) "switch" statement');
-		}
+    public SwitchCaseHelper case(Object caseOperand, ActionContainer container, Boolean hasBreak) {
 
-		if (!isCaseAfterBreakStatement) {
-			container.doAction();
-		}
+        if (isPreviousSwitch == null) {
+            throw new SwitchCaseException(EXCEPTION_MESSAGE);
+        }
 
-		return this;
-	}
+        if (isPreviousSwitch) {
+            isPreviousSwitch = false;
+        }
+
+        if (isCaseAfterBreakStatement) {
+            return this;
+        }
+
+        if (switchOperand.equals(caseOperand)) {
+            container.doAction();
+            isCaseAfterBreakStatement = hasBreak;
+        }
+        
+        return this;
+    }
+
+    public SwitchCaseHelper default(ActionContainer container) {
+
+        if (isPreviousSwitch == null) {
+            throw new SwitchCaseException(EXCEPTION_MESSAGE);
+        }
+
+        if (!isCaseAfterBreakStatement) {
+            container.doAction();
+        }
+        return this;
+    }
 }
